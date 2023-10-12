@@ -6,18 +6,18 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ### Session contents
 
-This session will introduce you to the modern data wrangling workflow with R and dplyr. Data wrangling is one of the core steps in the data science workflow. dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges, including the manipulation of datasets and variables. 
+This session will introduce you to the geocoding workflow with R and sf. Geocoding is the computational process by which a physical address is converted into geographic coordinates. dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges, including the manipulation of datasets and variables. 
 
 ### Main learning objectives
 
-The goals of this session are to (1) equip you with conceptual knowledge about the dplyr package and data wrangling workflow, (2) show you the three key verbs of the pacakge, and (3) provide you with practice material as well as some further readings.
+The goals of this session are to (1) equip you with conceptual knowledge about the sf package and geocoding workflow, (2) show you the HOW MANY? TBD key verbs of the pacakge, and (3) provide you with practice material as well as some further readings.
 
 
 ## Instructors
 
 - Giulia Maria Petrilli ([website](http://simonmunzert.github.io/), [twitter](https://twitter.com/simonsaysnothin))
-- Jennifer Estigene ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
-- Xiaohan Wu ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
+- Jennifer Estigene ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))     this is not your actual website and twitter ahah, just keeping what the link looks like for reference 
+- Xiaohan Wu ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog)) same here 
 
 
 
