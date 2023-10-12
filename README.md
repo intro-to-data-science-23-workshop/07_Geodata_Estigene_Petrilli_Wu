@@ -6,11 +6,11 @@ This repository provides materials for a session that is part of the [I2DS Tools
 
 ### Session contents
 
-This session will introduce you to the geocoding workflow with R and sf. Geocoding is the computational process by which a physical address is converted into geographic coordinates. dplyr is a grammar of data manipulation, providing a consistent set of verbs that help you solve the most common data manipulation challenges, including the manipulation of datasets and variables. 
+This session will introduce you to the geocoding workflow with R and sf. Geocoding is the computational process by which a physical address is converted into geographic coordinates. sf is a package used for working with geospatial data, enabling the creation, manipulation, and analysis of spatial data like points, lines, and polygons.
 
 ### Main learning objectives
 
-The goals of this session are to (1) equip you with conceptual knowledge about the sf package and geocoding workflow, (2) show you the HOW MANY? TBD key verbs of the pacakge, and (3) provide you with practice material as well as some further readings.
+The goals of this session are to (1) equip you with conceptual knowledge about the sf package and geocoding workflow, (2) show you the HOW MANY? TBD key verbs of the package, and (3) provide you with practice material as well as some further readings.
 
 
 ## Instructors
