@@ -1,6 +1,4 @@
-# sf_workshop
-Workshop 07 - Geospatial analysis with sf - Jennifer Estigene, Giulia Maria Petrilli, Xiaohan Wu
-# Working with dplyr
+# Geospatial analysis with SF 
 
 ## Summary
 
@@ -17,8 +15,10 @@ The goals of this session are to (1) equip you with conceptual knowledge about t
 
 ## Instructors
 
-- Simon Munzert ([website](http://simonmunzert.github.io/), [twitter](https://twitter.com/simonsaysnothin))
-- Kermit the Frog ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
+- Giulia Maria Petrilli ([website](http://simonmunzert.github.io/), [twitter](https://twitter.com/simonsaysnothin))
+- Jennifer Estigene ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
+- Xiaohan Wu ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))
+
 
 
 ## Further resources
@@ -34,6 +34,9 @@ The material in this repository is made available under the [MIT license](http:/
 
 ## Statement of contributions
 
-**Simon Munzert** prepared the practice material and post-processed the recording.
+**Giulia Maria Petrilli** prepared the practice material and post-processed the recording.
 
-**Kermit the Frog** prepared the presentation slides and recording. He also provided an example to the practice material.
+**Jennifer Estigene** prepared the presentation slides and recording. He also provided an example to the practice material.
+
+**Xiaohan Wu** brought good vibes and did something else. All tentative for now 
+
