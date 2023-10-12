@@ -1,11 +1,27 @@
 ---
-title: "Workshop_07"
-output: ioslides_presentation
-date: "2023-10-12"
+title: "Geocoding with Simple Features"
+subtitle: "Workshop 07"
+author: "Giulia Maria Petrilli, Jennifer Estigene, Xiaohuan Wu"
+institute: "Hertie School"
+output:
+  xaringan::moon_reader:
+    css: [default,'simons-touch.css', metropolis, metropolis-fonts] 
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+      hash: true
+---
+
+class: inverse, center, middle
+name: welcome
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+
 ```
 
 ## R Markdown
