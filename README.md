@@ -17,7 +17,7 @@ The goals of this session are to (1) equip you with conceptual knowledge about t
 
 - Giulia Maria Petrilli ([website](http://simonmunzert.github.io/), [twitter](https://twitter.com/simonsaysnothin))
 - Jennifer Estigene ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))     this is not your actual website and twitter ahah, just keeping what the link looks like for reference 
-- Xiaohan Wu ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog)) same here 
+- Xiaohan Wu ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog)) same here . Also lmk what name you'd prefer we use! if this one or Julia 
 
 
 
