@@ -1,0 +1,62 @@
+---
+title: "Workshop on Geodata"
+output: html_document
+date: "2023-10-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Packages 
+
+These are all the packages we will need 
+
+```{r cars}
+# Define Berlin's coordinates
+#install.packages("geosphere")
+library(geosphere)
+library(tmaptools)
+library(nominatim)
+library(sf)
+library(ggmap)
+library(sf)
+#install.packages("mapview")
+library(mapview)
+
+```
+
+## Transforming point data to a sf object
+
+We are from Rome and Tianjin. Let's see where these are on a map 
+
+```{r pressure, echo=FALSE}
+# This code finds the coordinate of Berlin 
+
+
+cities <- data.frame(
+  place = c("Rome", "Tianjin"),
+  long = c(12.496366, 117.190182),
+  lat = c(41.902782, 39.084158),
+  value = c(500, 600))
+class(d)
+
+
+cities_dsf <- st_as_sf(d, coords = c("long", "lat"))
+st_crs(dsf) <- 4326
+class(dsf)
+
+mapview(dsf)
+
+```
+
+Its lengthy to insert the lon and the lat for every city. Let's ask R to do that. 
+
+
+```{r}
+
+
+
+```
+
+```
