@@ -23,6 +23,11 @@ library(ggmap)
 library(sf)
 #install.packages("mapview")
 library(mapview)
+#install.packages("ggmap")
+library(sf)
+library(tmaptools)
+
+install.packages("dsf")
 
 ```
 
@@ -35,22 +40,56 @@ We are from Rome and Tianjin. Let's see where these are on a map
 
 
 cities <- data.frame(
-  place = c("Rome", "Tianjin"),
-  long = c(12.496366, 117.190182),
-  lat = c(41.902782, 39.084158),
-  value = c(500, 600))
-class(d)
+  place = c("Rome", "Tianjin", "Ottawa"),
+  long = c(12.496366, 117.190182, -75.690308),  
+  lat = c(41.902782, 39.084158, 45.421529),    
+  value = c(500, 600, 700))                     
 
+class(cities)  # WHY DO WE CHECK CLASS
 
-cities_dsf <- st_as_sf(d, coords = c("long", "lat"))
-st_crs(dsf) <- 4326
-class(dsf)
+cities_dsf <- st_as_sf(cities, coords = c("long", "lat")) # st_as_sf function is used to convert data, such as a data frame or a matrix, into an sf object. An sf object is a special data structure used for working with spatial data. 
+st_crs(cities_dsf) <- 4326
+class(cities_dsf)
 
-mapview(dsf)
+mapview(cities_dsf)
 
 ```
 
-Its lengthy to insert the lon and the lat for every city. Let's ask R to do that. 
+Quite cool! But to insert the coordinates feels a bit lenghty, especially when there is a r function that does it for you/ I am referring to geocode_OSM() 
+```{r}
+
+cities_c <- c("Rome", "Tianjin", "Ottawa")
+geocoded_cities <- geocode_OSM(cities_c) 
+
+geocoded_cities
+
+# Create new column using st_as_sf to store the geometry in a column 
+
+geometry_geocoded_cities <- st_as_sf(geocoded_cities,
+                      coords = c(x = "lon", y = "lat"),
+                      crs = 4326)
+
+geometry_geocoded_cities
+mapview(geometry_geocoded_cities)
+
+
+```
+
+
+calculate distance between cities 
+```{r}
+
+
+```
+
+
+Pretty cool because when only did geocode("Rome"), you are required to use an API address, so going to google and scrape that.  Just for demostration, this is what happens.  
+
+```{r pressure, echo=FALSE}
+geocode_OSM("Rome")
+
+```
+
 
 
 ```{r}
