@@ -27,7 +27,7 @@ library(stringr)
 library(rvest)
 library(geosphere)
 library(nominatim)
-library(sf)
+
 library(ggmap)
 library(mapview)
 
@@ -77,7 +77,6 @@ mapview(geometry_geocoded_cities)
 ```
 
 
-
 Pretty cool because when only did geocode("Rome"), you are required to use an API address, so going to google and scrape that.  Just for demostration, this is what happens.  
 
 ``` {r}
@@ -85,8 +84,45 @@ geocode_OSM("Rome")
 
 ```
 
-## C
-## cc
-## C
-## cc
+## North Carolina 
+
+```{r}
+
+demo(nc, ask = FALSE, echo = FALSE)
+plot(st_geometry(nc))
+# https://r-spatial.github.io/sf/articles/sf5.html
+
+```
+Color key place and size
+In case a single attribute is selected, by default a color key is given the side of the plot where it leaves as much as possible room for the plotted map; for nc this is below:
+
+
+```{r}
+plot(nc["AREA"])
+# https://r-spatial.github.io/sf/articles/sf5.html
+```
+Let's use st_centroid to find out about the centroids in each region in Corth carolina. Centroids tend to be the areas of easiest reach.  For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. Of course, it depends on the specific region, 
+
+
+```{r}
+
+
+plot(st_geometry(nc), col = sf.colors(12, categorical = TRUE), border = 'grey', 
+     axes = TRUE)
+
+plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red')
+
+# CAANT FIGURE OUT HOW TO OVERLAP THESE TWO PLOTS 
+
+# https://r-spatial.github.io/sf/articles/sf5.html
+
+```
+ This code space here is for general trials 
+```{r}
+
+```
+
+## Excercise 3
+## Excercise 4
+## Excercise 5
 
