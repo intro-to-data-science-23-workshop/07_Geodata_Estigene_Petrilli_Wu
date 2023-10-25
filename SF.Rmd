@@ -1,43 +1,44 @@
 ---
-title: "Workshop on Geodata"
-output: html_document
-date: "2023-10-13"
+title: " An Introduction to Geocoding with 'sf'"
+author: "Giulia Maria Petrilli, Julia Wu and Jennifer Estigene"
+date: '2023-10-30'
+output: 
+ html_document:
+    toc: TRUE
+    df_print: paged
+    number_sections: FALSE
+    highlight: monochrome
+    theme: yeti
+    toc_depth: 3
+    toc_float: TRUE
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Packages 
-
-These are all the packages we will need 
-
-```{r cars}
-# Define Berlin's coordinates
-#install.packages("geosphere")
-library(geosphere)
+```{r include=FALSE}
+library(tidyverse)
+library(sf)
+library(tmap)
+#library(tm)
 library(tmaptools)
+library(stringr)
+library(rvest)
+library(geosphere)
 library(nominatim)
 library(sf)
 library(ggmap)
-library(sf)
-#install.packages("mapview")
 library(mapview)
-#install.packages("ggmap")
-library(sf)
-library(tmaptools)
-
-install.packages("dsf")
 
 ```
+
 
 ## Transforming point data to a sf object
 
 We are from Rome and Tianjin. Let's see where these are on a map 
 
-```{r pressure, echo=FALSE}
-# This code finds the coordinate of Berlin 
-
+```{r}
 
 cities <- data.frame(
   place = c("Rome", "Tianjin", "Ottawa"),
@@ -76,26 +77,16 @@ mapview(geometry_geocoded_cities)
 ```
 
 
-calculate distance between cities 
-```{r}
-
-
-```
-
 
 Pretty cool because when only did geocode("Rome"), you are required to use an API address, so going to google and scrape that.  Just for demostration, this is what happens.  
 
-```{r pressure, echo=FALSE}
+``` {r}
 geocode_OSM("Rome")
 
 ```
 
+## C
+## cc
+## C
+## cc
 
-
-```{r}
-
-
-
-```
-
-```
