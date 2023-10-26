@@ -101,24 +101,22 @@ In case a single attribute is selected, by default a color key is given the side
 plot(nc["AREA"])
 # https://r-spatial.github.io/sf/articles/sf5.html
 ```
-Let's use st_centroid to find out about the centroids in each region in Corth carolina. Centroids tend to be the areas of easiest reach.  For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. Of course, it depends on the specific region, 
+Let's use st_centroid to find out about the centroids in each region in Corth carolina. Centroids tend to be the areas of easiest reach. For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. Of course, it depends on the specific region, 
 
 
 ```{r}
 
 
-plot(st_geometry(nc), col = sf.colors(12, categorical = TRUE), border = 'grey', 
-     axes = TRUE)
+plot(st_geometry(nc), border = 'grey', axes = TRUE) 
+plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red', add = TRUE)
 
-plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red')
-
-# CAANT FIGURE OUT HOW TO OVERLAP THESE TWO PLOTS 
 
 # https://r-spatial.github.io/sf/articles/sf5.html
 
 ```
  This code space here is for general trials 
 ```{r}
+
 
 ```
 
