@@ -20,56 +20,55 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r include=FALSE}
 library(tidyverse)
 library(sf)
-library(tmap)
 #library(tm)
 library(tmaptools)
-library(stringr)
-library(rvest)
 library(geosphere)
-library(nominatim)
-
-library(ggmap)
+library(spData)
+library(raster)
+library(ggplot2)
 library(mapview)
 
-           # spatial data classes
-library(dplyr)        # data manipulation
 
-
-
-#install.packages("stplanr")
-library(stplanr)      # transport planning
-install.packages("spDataLarge", repos = "https://nowosad.github.io/drat/", type = "source")
-library(spDataLarge)  # example datasets
+# Put commented out packages that one might want to download 
 
 ```
 
 
-## Transforming point data to a sf object
+# Introduction 
 
-We are from Rome, Tianjin and Ottawa. Let's see where these are on a map 
+Geocoding is the process of determining geographic coordinates for place names, street addresses, and zip codes. From information like addresses, city or building names, for example, R fetches the corresponding coordinates and pins it on a map. In this workshop, we will use adopt the standardized way to handle and process spatial data, the "simple features" (sf) package. At the end of our tutorial, you should be familiar with some common verbs used in sf and how to use them for geospatial analysis. 
+
+
+# Transforming point data to a sf object
+
+Let us get to know two important sf functions, st_as_sf and st_crs. They often work together. While st_as_sf function is used to convert data frames or matrices into sf objects, st_crs function is used to manage and retrieve the Coordinate Reference System (CRS) of a spatial object. To be clear, an sf object is a special data structure used for working with spatial data, while the CRS defines how the two-dimensional (or three-dimensional) points relate to actual places on the Earth.
+
+Let's see them in action in an example. 
+
+Hertie's international environment makes it so we often work with people that come very far from where we are from. Specifically, the three of us that worked on this workshop are from Rome, Tianjin and Ottawa. To get a sense of how far these places actually are from each other, let's plot them on a map. The function mapview() will come in very handy, as it will produces an interactive view of our cities. 
 
 ```{r}
 
 cities <- data.frame(
   place = c("Rome", "Tianjin", "Ottawa"),
-  long = c(12.496366, 117.190182, -75.690308),  
-  lat = c(41.902782, 39.084158, 45.421529),    
-  value = c(500, 600, 700))                     
+  long = c(12.496366, 117.190182, -75.690308),  # Longitude of each 
+  lat = c(41.902782, 39.084158, 45.421529))      # Latitude of each 
+    
+cities_dsf <- st_as_sf(cities, coords = c("long", "lat"))  # Makes long and lat into mappable points 
+st_crs(cities_dsf) <- 4326  
 
-class(cities)  # WHY DO WE CHECK CLASS
-
-cities_dsf <- st_as_sf(cities, coords = c("long", "lat")) # st_as_sf function is used to convert data, such as a data frame or a matrix, into an sf object. An sf object is a special data structure used for working with spatial data. 
-st_crs(cities_dsf) <- 4326
-class(cities_dsf)
+#The number 4326 is an identifier for a specific Coordinate Reference System (CRS) known as WGS 84. It's like a language code that tells software how to understand and display locations on a map.
 
 mapview(cities_dsf)
 
 ```
 
 Quite cool! But to insert the coordinates feels a bit lenghty, especially when there is a r function that does it for you/ I am referring to geocode_OSM() 
+
+
 ```{r}
 
-cities_c <- c("Rome", "Tianjin", "Ottawa")
+cities_c <- c( "Tianjin", "Rome","Ottawa")
 geocoded_cities <- geocode_OSM(cities_c) 
 
 geocoded_cities
@@ -80,80 +79,84 @@ geometry_geocoded_cities <- st_as_sf(geocoded_cities,
                       coords = c(x = "lon", y = "lat"),
                       crs = 4326)
 
-geometry_geocoded_cities
+#mapview(geometry_geocoded_cities)
+
+
+geometry_geocoded_cities$CityName <- cities_c
+
+# Use mapview and specify the zcol parameter to display city names on the legend
+mapview(geometry_geocoded_cities, zcol = "CityName")
 
 
 ```
 
 
-Now, let us add Hertie School and Bocconi and Tsinghua university. we show them on a map 
+Now, let us add Hertie School and the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. we show them on a map. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. 
 
 ```{r}
 
 
-bocconi_hertie_tsinghua <- geocode_OSM(c("Bocconi, Milan", " Hertie School, Berlin", "Tsinghua University, Bejing"))
-geometry_bocconi_hertie_tsinghua <- st_as_sf(bocconi_hertie_tsinghua, coords = c(x = "lon", y = "lat"), crs = 4326)
+bachelors <- geocode_OSM(c("University of Ottawa", "6211 KW", "Market Street, Floor 9, San Francisco"))
 
-mapview(geometry_bocconi_hertie_tsinghua)
+geometry_bachelors <- st_as_sf(bachelors, coords = c(x = "lon", y = "lat"), crs = 4326)
 
+university_names <- c("University of Ottawa", "Maastricht University", "Minerva University (SF, US)")
+geometry_bachelors$UniName <- university_names 
 
+# Use mapview and specify the zcol parameter to display city names on the legend
+mapview(geometry_bachelors, zcol = "UniName")
 
-```
+overlay_map <- mapview(geometry_bachelors, zcol = "UniName") + mapview(geometry_geocoded_cities, zcol = "CityName")
 
-
-We show all on a map 
-
-
-```{r}
-#view(geometry_bocconi_hertie_tsinghua)
-
-overlay_map <- mapview(geometry_bocconi_hertie_tsinghua, zcol = "query") + mapview(geometry_geocoded_cities)
 overlay_map
 
 
+
+# THE LABELS ARE DIFFERENT COLOURS? CONFUSING 
+
+
 ```
+
 
 
 Find places that are closest to each other using st_distance 
 
-
 ```{r}
 
-data_sf <- rbind(geometry_geocoded_cities, geometry_bocconi_hertie_tsinghua)
+
+colnames(geometry_geocoded_cities) <- colnames(geometry_bachelors)  # this otherwise it would not rbind 
+rbind(geometry_geocoded_cities, geometry_bachelors)
+
+
+# Ensure data_sf is in a suitable CRS that uses meters as its units.
+# Here, I'm transforming to UTM zone 33N as an example. You might want to choose a more suitable CRS based on your data's location.
+data_sf <- rbind(geometry_geocoded_cities, geometry_bachelors)
+
+# If required, transform the CRS to one with meters as units. This is important for distance calculations. 
+# (Uncomment next line if needed)
+# data_sf_proj <- st_transform(data_sf, crs = 32633)
+
 # Compute the distance matrix
 dist_matrix <- st_distance(data_sf)
 
 # To find the pair with the smallest non-zero distance
-min_distance <- min(dist_matrix[upper.tri(dist_matrix)])
-closest_pair_indices <- which(dist_matrix == min_distance, arr.ind = TRUE)
+min_distance_meters <- min(dist_matrix[upper.tri(dist_matrix)])
+min_distance_km <- min_distance_meters / 1000  # Convert to kilometers
+
+closest_pair_indices <- which(dist_matrix == min_distance_meters, arr.ind = TRUE)
 
 # Extract the names of the closest cities
 city1 <- data_sf$query[closest_pair_indices[1, 1]]
 city2 <- data_sf$query[closest_pair_indices[1, 2]]
 
-# Print the names
-cat("The closest places are:", city1, "and", city2)
-
-```
-Farthest places 
-
-```{r}
-# Using the same data_sf and computed dist_matrix
-
-# To find the pair with the maximum distance
-max_distance <- max(dist_matrix)
-farthest_pair_indices <- which(dist_matrix == max_distance, arr.ind = TRUE)
-
-# Extract the names of the farthest cities
-city1 <- data_sf$query[farthest_pair_indices[1, 1]]
-city2 <- data_sf$query[farthest_pair_indices[1, 2]]
-
-# Print the names
-cat("The farthest places are:", city1, "and", city2)
+# Print the names and distance
+cat("The closest places are:", city1, "and", city2, "with a distance of", min_distance_km, "km")
 
 
 ```
 Distances in number. same code as above but trying to show distances 
+
+In this case this information is available online but with other datasets this might not always be the cas. PLus, we might be in a situation where theres way more data points than we have. 
 
 ```{r}
 
@@ -161,8 +164,6 @@ Distances in number. same code as above but trying to show distances
 # Here, I'm transforming to UTM zone 33N as an example. You might want to choose a more suitable CRS based on your data's location.
 data_sf_proj <- st_transform(data_sf, crs = 32633)
 
-
-?st_transform
 
 # Compute the distance matrix
 dist_matrix <- st_distance(data_sf_proj)
@@ -184,7 +185,7 @@ cat("The farthest places are:", city1, "and", city2, "with a distance of", max_d
 ```
 
 
-## North Carolina 
+# North Carolina 
 
 
 Source
@@ -216,73 +217,114 @@ https://r-spatial.github.io/sf/articles/sf5.html
 
 ```{r}
 
-
 plot(st_geometry(nc), border = 'grey', axes = TRUE) 
 plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red', add = TRUE)
 
-
-
-
 ```
  
- 
- 
-## Bristol origin-destination data
-
-
-The data used in this example is sourced from Lovelace, Nowosad, and Muenchow (2019). It concerns to origin-destination (OD) counts, which represent the number of individuals traveling from Zone A to Zone B using different modes of transportation. The feature geometries for the 102 origin and destination areas are contained in the 'sf' object named 'bristol_zones', and are depicted in the following figure. 
-
-Sources 
-
-https://cran.r-project.org/web/packages/spData/readme/README.html # for info on how to download spDataLarge with all the datasets 
-https://r-spatial.org/book/07-Introsf.html
-
-
 ```{r}
 
-plot(st_geometry(bristol_zones), axes = TRUE, graticule = TRUE)
 
+# Determine the spatial relationship between different counties
+library(sf)
+intersections <- st_intersects(nc, nc)
+print(intersections)
 
+plot(nc, max.plot = 14)
+```
 
+```{r}
+# Plot the map of the 'nc' dataset, coloring the polygons based on a specific attribute
+plot(nc["BIR74"])
 ```
 
 
 
 ```{r}
-head(bristol_od)
-
-nrow(bristol_zones)^2 - nrow(bristol_od) 
-bristol_tidy <- bristol_od |> 
-    select(-all) |> 
-    pivot_longer(3:6, names_to = "mode", values_to = "n")
-
-head(bristol_tidy)
-
-od <- bristol_tidy |> pull("o") |> unique()
-nod <- length(od)
-mode <- bristol_tidy |> pull("mode") |> unique()
-nmode = length(mode)
-a = array(0L,  c(nod, nod, nmode), 
-    dimnames = list(o = od, d = od, mode = mode))
-dim(a)
+# Calculate the total population for each county in the 'nc' dataset
+total_population <- aggregate(nc[["BIR74"]], by = list(nc[["NAME"]]), FUN = sum)
+colnames(total_population) <- c("County", "Total_Population")
+head(print(total_population), 15)
+```
 
 
-a[as.matrix(bristol_tidy[c("o", "d", "mode")])] <- 
-        bristol_tidy$n
-
-
-order <- match(od, bristol_zones$geo_code)
-zones <- st_geometry(bristol_zones)[order]
-
-?stars()
-
-library(stars)
-(d <- st_dimensions(o = zones, d = zones, mode = mode))
-
-(odm <- st_as_stars(list(N = a), dimensions = d))
-
-plot(adrop(odm[,,33]) + 1, logz = TRUE)
+```{r}
+# Find the county with the highest population in the 'nc' dataset
+county_highest_population <- total_population[which.max(total_population$Total_Population), ]
+print(county_highest_population)
 
 ```
- 
 
+```{r}
+# Compute the area of each county in square kilometers
+area_sq_km <- st_area(nc) / 10^6  # Convert to square kilometers
+area_df <- data.frame(NAME = nc$NAME, Area_Sq_Km = area_sq_km)
+head(print(area_df), 15)
+
+```
+
+
+```{r}
+# Find the biggest area 
+county_biggest <- area_df[which.max(area_df$Area_Sq_Km), ]
+print(county_biggest)
+```
+
+
+# World dataset
+
+ 
+```{r}
+# Just showing head otherwise it keeps on running for very long
+
+str(head(world))
+```
+ 
+ 
+```{r}
+
+head(world$continent, 5)
+```
+
+
+```{r}
+head(methods(class = 'sf'), 30)
+```
+
+
+```{r}
+plot(world['lifeExp'])
+```
+
+
+```{r}
+
+
+# WHAT IS AFRICA DOING HERE 
+
+africa_sf <- world["continent"][world$continent == "Africa", ]
+plot(africa_sf, main = 'Africa', col= NA)
+
+plot(world['pop'])
+```
+
+
+DO WE NEED THIS AS WELL
+
+```{r}
+world <- st_transform(world, 3857)
+st_crs(world)
+
+library(viridis)
+ggplot(world) +
+  geom_sf(aes(fill = lifeExp)) +
+  scale_fill_viridis("lifeExp") +
+  coord_sf(crs = st_crs(4087)) +
+  ggtitle("World Equidistant Cylindrical (EPSG 4087)") +
+  theme_bw()
+```
+
+## References 
+
+
+ 
