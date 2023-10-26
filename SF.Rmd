@@ -108,7 +108,7 @@ bocconi_hertie <- mapview(geometry_bocconi_hertie)
 bocconi_hertie
 
 
-overlay_map <- mapview(geometry_bocconi_hertie) + mapview(geometry_geocoded_cities)
+overlay_map <- mapview(geometry_bocconi_hertie, zcol = "query") + mapview(geometry_geocoded_cities)
 
 overlay_map
 
@@ -221,16 +221,4 @@ plot(adrop(odm[,,33]) + 1, logz = TRUE)
 
 ```
  
-## Gdp per capita Asia and Africa  
-Maybe interesting link but idk if they use sf enough https://thinking-spatial.org/courses/angewandte_geodatenverarbeitung/kurs03/ 
-
-
-```{r}
-
-
-```
-
-```{r}
-
-```
 
