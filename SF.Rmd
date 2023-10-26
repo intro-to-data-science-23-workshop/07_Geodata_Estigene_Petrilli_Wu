@@ -31,12 +31,22 @@ library(nominatim)
 library(ggmap)
 library(mapview)
 
+           # spatial data classes
+library(dplyr)        # data manipulation
+
+
+
+#install.packages("stplanr")
+library(stplanr)      # transport planning
+install.packages("spDataLarge", repos = "https://nowosad.github.io/drat/", type = "source")
+library(spDataLarge)  # example datasets
+
 ```
 
 
 ## Transforming point data to a sf object
 
-We are from Rome and Tianjin. Let's see where these are on a map 
+We are from Rome, Tianjin and Ottawa. Let's see where these are on a map 
 
 ```{r}
 
@@ -71,8 +81,8 @@ geometry_geocoded_cities <- st_as_sf(geocoded_cities,
                       crs = 4326)
 
 geometry_geocoded_cities
-mapview(geometry_geocoded_cities)
-
+our_cities <- mapview(geometry_geocoded_cities)
+our_cities
 
 ```
 
@@ -84,24 +94,60 @@ geocode_OSM("Rome")
 
 ```
 
+Now, let us add Hertie School. Let's see if i Is within the polygon created by our cities. This function is relevant in other examples. Can be used to see how many people live eithin a certain area or how many forests. Quite useful for urban planning, our is just a basic representation of how the package works. 
+
+```{r}
+
+
+bocconi_hertie <- geocode_OSM(c("Bocconi, Milan", " Hertie School, Berlin"))
+
+
+geometry_bocconi_hertie<- st_as_sf(bocconi_hertie, coords = c(x = "lon", y = "lat"), crs = 4326)
+
+bocconi_hertie <- mapview(geometry_bocconi_hertie)
+bocconi_hertie
+
+
+overlay_map <- mapview(geometry_bocconi_hertie) + mapview(geometry_geocoded_cities)
+
+overlay_map
+
+```
+
+add university in china and calculate distance with hertie or smt like that 
+```{r}
+
+```
+
+
 ## North Carolina 
+
+
+Source
+https://r-spatial.github.io/sf/articles/sf5.html
 
 ```{r}
 
 demo(nc, ask = FALSE, echo = FALSE)
 plot(st_geometry(nc))
-# https://r-spatial.github.io/sf/articles/sf5.html
+
 
 ```
 Color key place and size
 In case a single attribute is selected, by default a color key is given the side of the plot where it leaves as much as possible room for the plotted map; for nc this is below:
 
+source 
+https://r-spatial.github.io/sf/articles/sf5.html
+
 
 ```{r}
 plot(nc["AREA"])
-# https://r-spatial.github.io/sf/articles/sf5.html
+
 ```
-Let's use st_centroid to find out about the centroids in each region in Corth carolina. Centroids tend to be the areas of easiest reach. For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. Of course, it depends on the specific region, 
+Let's use st_centroid to find out about the centroids in each region in Corth carolina. Centroids tend to be the areas of easiest reach. For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. 
+
+Sources
+https://r-spatial.github.io/sf/articles/sf5.html
 
 
 ```{r}
@@ -111,16 +157,80 @@ plot(st_geometry(nc), border = 'grey', axes = TRUE)
 plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red', add = TRUE)
 
 
-# https://r-spatial.github.io/sf/articles/sf5.html
+
 
 ```
- This code space here is for general trials 
+ 
+ 
+ 
+## Bristol origin-destination data
+
+
+The data used in this example is sourced from Lovelace, Nowosad, and Muenchow (2019). It concerns to origin-destination (OD) counts, which represent the number of individuals traveling from Zone A to Zone B using different modes of transportation. The feature geometries for the 102 origin and destination areas are contained in the 'sf' object named 'bristol_zones', and are depicted in the following figure. 
+
+Sources 
+
+https://cran.r-project.org/web/packages/spData/readme/README.html # for info on how to download spDataLarge with all the datasets 
+https://r-spatial.org/book/07-Introsf.html
+
+
+```{r}
+
+plot(st_geometry(bristol_zones), axes = TRUE, graticule = TRUE)
+
+
+
+```
+
+
+
+```{r}
+head(bristol_od)
+
+nrow(bristol_zones)^2 - nrow(bristol_od) 
+bristol_tidy <- bristol_od |> 
+    select(-all) |> 
+    pivot_longer(3:6, names_to = "mode", values_to = "n")
+
+head(bristol_tidy)
+
+od <- bristol_tidy |> pull("o") |> unique()
+nod <- length(od)
+mode <- bristol_tidy |> pull("mode") |> unique()
+nmode = length(mode)
+a = array(0L,  c(nod, nod, nmode), 
+    dimnames = list(o = od, d = od, mode = mode))
+dim(a)
+
+
+a[as.matrix(bristol_tidy[c("o", "d", "mode")])] <- 
+        bristol_tidy$n
+
+
+order <- match(od, bristol_zones$geo_code)
+zones <- st_geometry(bristol_zones)[order]
+
+?stars()
+
+library(stars)
+(d <- st_dimensions(o = zones, d = zones, mode = mode))
+
+(odm <- st_as_stars(list(N = a), dimensions = d))
+
+plot(adrop(odm[,,33]) + 1, logz = TRUE)
+
+```
+ 
+## Gdp per capita Asia and Africa  
+Maybe interesting link but idk if they use sf enough https://thinking-spatial.org/courses/angewandte_geodatenverarbeitung/kurs03/ 
+
+
 ```{r}
 
 
 ```
 
-## Excercise 3
-## Excercise 4
-## Excercise 5
+```{r}
+
+```
 
