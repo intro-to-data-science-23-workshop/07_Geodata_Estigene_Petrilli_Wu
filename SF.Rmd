@@ -81,41 +81,105 @@ geometry_geocoded_cities <- st_as_sf(geocoded_cities,
                       crs = 4326)
 
 geometry_geocoded_cities
-our_cities <- mapview(geometry_geocoded_cities)
-our_cities
+
 
 ```
 
 
-Pretty cool because when only did geocode("Rome"), you are required to use an API address, so going to google and scrape that.  Just for demostration, this is what happens.  
-
-``` {r}
-geocode_OSM("Rome")
-
-```
-
-Now, let us add Hertie School. Let's see if i Is within the polygon created by our cities. This function is relevant in other examples. Can be used to see how many people live eithin a certain area or how many forests. Quite useful for urban planning, our is just a basic representation of how the package works. 
+Now, let us add Hertie School and Bocconi and Tsinghua university. we show them on a map 
 
 ```{r}
 
 
-bocconi_hertie <- geocode_OSM(c("Bocconi, Milan", " Hertie School, Berlin"))
+bocconi_hertie_tsinghua <- geocode_OSM(c("Bocconi, Milan", " Hertie School, Berlin", "Tsinghua University, Bejing"))
+geometry_bocconi_hertie_tsinghua <- st_as_sf(bocconi_hertie_tsinghua, coords = c(x = "lon", y = "lat"), crs = 4326)
+
+mapview(geometry_bocconi_hertie_tsinghua)
 
 
-geometry_bocconi_hertie<- st_as_sf(bocconi_hertie, coords = c(x = "lon", y = "lat"), crs = 4326)
 
-bocconi_hertie <- mapview(geometry_bocconi_hertie)
-bocconi_hertie
+```
 
 
-overlay_map <- mapview(geometry_bocconi_hertie, zcol = "query") + mapview(geometry_geocoded_cities)
+We show all on a map 
 
+
+```{r}
+#view(geometry_bocconi_hertie_tsinghua)
+
+overlay_map <- mapview(geometry_bocconi_hertie_tsinghua, zcol = "query") + mapview(geometry_geocoded_cities)
 overlay_map
 
+
 ```
 
-add university in china and calculate distance with hertie or smt like that 
+
+Find places that are closest to each other using st_distance 
+
+
 ```{r}
+
+data_sf <- rbind(geometry_geocoded_cities, geometry_bocconi_hertie_tsinghua)
+# Compute the distance matrix
+dist_matrix <- st_distance(data_sf)
+
+# To find the pair with the smallest non-zero distance
+min_distance <- min(dist_matrix[upper.tri(dist_matrix)])
+closest_pair_indices <- which(dist_matrix == min_distance, arr.ind = TRUE)
+
+# Extract the names of the closest cities
+city1 <- data_sf$query[closest_pair_indices[1, 1]]
+city2 <- data_sf$query[closest_pair_indices[1, 2]]
+
+# Print the names
+cat("The closest places are:", city1, "and", city2)
+
+```
+Farthest places 
+
+```{r}
+# Using the same data_sf and computed dist_matrix
+
+# To find the pair with the maximum distance
+max_distance <- max(dist_matrix)
+farthest_pair_indices <- which(dist_matrix == max_distance, arr.ind = TRUE)
+
+# Extract the names of the farthest cities
+city1 <- data_sf$query[farthest_pair_indices[1, 1]]
+city2 <- data_sf$query[farthest_pair_indices[1, 2]]
+
+# Print the names
+cat("The farthest places are:", city1, "and", city2)
+
+
+```
+Distances in number. same code as above but trying to show distances 
+
+```{r}
+
+# Ensure data_sf is in a suitable CRS that uses meters as its units.
+# Here, I'm transforming to UTM zone 33N as an example. You might want to choose a more suitable CRS based on your data's location.
+data_sf_proj <- st_transform(data_sf, crs = 32633)
+
+
+?st_transform
+
+# Compute the distance matrix
+dist_matrix <- st_distance(data_sf_proj)
+
+# To find the pair with the maximum distance
+max_distance_meters <- max(dist_matrix)
+max_distance_km <- max_distance_meters / 1000  # Convert to kilometers
+
+farthest_pair_indices <- which(dist_matrix == max_distance_meters, arr.ind = TRUE)
+
+# Extract the names of the farthest cities
+city1 <- data_sf$query[farthest_pair_indices[1, 1]]
+city2 <- data_sf$query[farthest_pair_indices[1, 2]]
+
+# Print the names and distance
+cat("The farthest places are:", city1, "and", city2, "with a distance of", max_distance_km, "km")
+
 
 ```
 
