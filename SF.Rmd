@@ -119,7 +119,7 @@ plot(i, add = TRUE, col = 'green', lwd = 2)
 ```
 
 
-# Read shapefiles  from the web using st_read()
+# Read shapefiles from the web using st_read()
 
 If we want to create a map, we need to use the 'Shapefile' format, which stores geometry and attribute information for spatial features in a dataset. The geometry is stored as a shape comprising a set of vector coordinates. We will need to read the Shapefile with st_read.
 
@@ -132,7 +132,7 @@ plot(world_boundaries["iso3"])
 
 # Transforming point data to a sf object and plotting on a map 
 
-## st_as_sf() st_cr and mapview()
+## st_as_sf() st_crs() and mapview()
 
 Let us get to know two important sf functions, st_as_sf() and st_crs(). They often work together. While st_as_sf() is used to convert data frames or matrices into sf objects, st_crs() is used to manage and retrieve the Coordinate Reference System (CRS) of a spatial object. To be clear, an sf object is a special data structure used for working with spatial data, while the CRS defines how the two-dimensional (or three-dimensional) points relate to actual places on the Earth.
 
@@ -262,20 +262,11 @@ plot(st_geometry(nc)) # Plotting the geometry of the 'nc' dataset
 We can also check the specific information of one county. For instance, we can check some attributes of the county 'Alleghany' and plot it's polygon respectively.
 
 ```{r}
-nc[2,] #last row
+nc[2,]
 plot(st_geometry(nc)[2]) # plot the polygon 'Alleghany'
 ```
 
-The output shows:
-
-* the (selected) dataset has 100 features (records) and 3 fields (attributes)
-* the geometry type is MULTIPOLYGON (a collection of multiple polygons overlapping, disjoint, nested)
-* it has dimension XY, indicating that each point will consist of 2 coordinate values
-* the range of x and y values of the geometry
-* the coordinate reference system (CRS) is geodetic, with coordinates in degrees longitude and latitude associated to the NAD27 datum
-* the attribute variables are followed by a variable 'geom' of type MULTIPOLYGON with unit degrees that contains the polygon information
-
-## Overlap and Intersection with st_overlaps()
+## Overlap and Intersection with st_overlaps() and st_intersects()
 
 St_overlaps() checks if geometry A and B "spatially overlap". They overlap if A and B have the same dimension (o for points, 1 for lines, 2 for areas) and their interiors intersect in that dimension.
 
@@ -345,19 +336,6 @@ print(county_highest_pop)
 ```
 
 
-```{r}
-# Compute the area of each county in square kilometers
-area_sq_km <- st_area(nc) / 10^6  # Convert to square kilometers
-area_df <- data.frame(NAME = nc$NAME, Area_Sq_Km = area_sq_km)
-head(print(area_df), 15)
-
-```
-
-
-```{r}
-county_biggest <- area_df[which.max(area_df$Area_Sq_Km), ]
-print(county_biggest)
-```
 Let's use ’st_centroid‘ to find out about the centroids in each region in North Carolina. Centroids tend to be the areas of easiest reach. For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. 
 
 Important: run these two codes together or the plots will not add with each other! 
