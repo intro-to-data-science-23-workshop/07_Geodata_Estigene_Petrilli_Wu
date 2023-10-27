@@ -20,7 +20,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r include=FALSE}
 library(tidyverse)
 library(sf)
-#library(tm)
 library(tmaptools)
 library(geosphere)
 library(spData)
@@ -28,8 +27,17 @@ library(raster)
 library(ggplot2)
 library(mapview)
 
+# Check which packages you don't have downloaded and uncomment here 
 
-# Put commented out packages that one might want to download 
+#install_packages(tidyverse)
+#install_packages(sf)
+#install_packages(tmaptools)
+#install_packages(geosphere)
+#install_packages(spData)
+#install_packages(raster)
+#install_packages(ggplot2)
+#install_packages(mapview)
+
 
 ```
 
@@ -152,80 +160,100 @@ city2 <- data_sf$query[farthest_pair_indices[1, 2]]
 
 # Print the names and distance
 cat("The farthest places are:", city1, "and", city2, "with a distance of", max_distance_km, "km")
-
-
 ```
 We just learned how to transform information about a location into coordinates and points on a map, and to check the distance between points. Let us no do a different kind of exercise, and see how sf can help is drawing a region's boundaries and extract information about it. 
 
-# North Carolina 
+# Working with polygons
 
+## st_geometry()
 
-Source
-https://r-spatial.github.io/sf/articles/sf5.html
+Let's now take a look at the spatial data of North Carolina counties 'nc' in the US. We can use 'st_geometry' function to generate the map of geometry composed with many polygons representing the counties. 
+
 
 ```{r}
-
-demo(nc, ask = FALSE, echo = FALSE)
-plot(st_geometry(nc))
-
-
+demo(nc, ask = FALSE, echo = FALSE) # show the nc dataset
+plot(st_geometry(nc)) # Plotting the geometry of the 'nc' dataset
 ```
-Color key place and size
-In case a single attribute is selected, by default a color key is given the side of the plot where it leaves as much as possible room for the plotted map; for nc this is below:
 
-source 
-https://r-spatial.github.io/sf/articles/sf5.html
-
+We can also check the specific information of one county. For instance, we can check some attributes of the county 'Alleghany' and plot it's polygon respectively.
 
 ```{r}
-plot(nc["AREA"])
-
+nc[2,] #last row
+plot(st_geometry(nc)[2]) # plot the polygon 'Alleghany'
 ```
-Let's use st_centroid to find out about the centroids in each region in Corth carolina. Centroids tend to be the areas of easiest reach. For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. 
 
-Sources
-https://r-spatial.github.io/sf/articles/sf5.html
+The output shows:
 
+* the (selected) dataset has 100 features (records) and 3 fields (attributes)
+* the geometry type is MULTIPOLYGON (a collection of multiple polygons overlapping, disjoint, nested)
+* it has dimension XY, indicating that each point will consist of 2 coordinate values
+* the range of x and y values of the geometry
+* the coordinate reference system (CRS) is geodetic, with coordinates in degrees longitude and latitude associated to the NAD27 datum
+* the attribute variables are followed by a variable 'geom' of type MULTIPOLYGON with unit degrees that contains the polygon information
+
+## Overlap and Intersection
+
+Now
+Overlap checks if geometry A and B "spatially overlap". They overlap if A and B have the same dimension (o for points, 1 for lines, 2 for areas) and their interiors intersect in that dimension.
 
 ```{r}
-
-plot(st_geometry(nc), border = 'grey', axes = TRUE) 
-plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red', add = TRUE)
-
+# check if there is overlap between the county (should be no overlap)
+st_overlaps(nc, nc)
 ```
- 
+
 ```{r}
+# check the lengths of all polygons
+lengths(st_overlaps(nc, nc))
+```
 
+The result shows that polygon 1 has 0 overlaps with other polygons and same for the rest of 9 polygons showed here. The lengths returns all 0 so we can be sure that there's no overlap between any pair of polygons.
 
+Now let's look at another concept - intersections. 'st_intersects' returns a logical matrix indicating whether each geometry pair intersects.
+
+```{r}
 # Determine the spatial relationship between different counties
-library(sf)
 intersections <- st_intersects(nc, nc)
 print(intersections)
-
-plot(nc, max.plot = 14)
 ```
 
-```{r}
-# Plot the map of the 'nc' dataset, coloring the polygons based on a specific attribute
-plot(nc["BIR74"])
-```
+## Color key mapping
 
+Now we can see the color in polygons by applying the 'SID74' attribute, which looks at the death counts 1974-1978 in North Carolina counties.
 
 
 ```{r}
+
+plot(nc["SID74"], graticule = TRUE, axes = TRUE, key.pos = 4) # plot the map, coloring the polygons based on 'SID74' attribute
+```
+
+
+Now that we get the map with the death counts attribute, we could check the birth count attribute to see if similar pattern appears across the counties. 
+
+```{r}
+library(mapview) |> suppressPackageStartupMessages()
+mapviewOptions(fgb = FALSE)
+nc |> mapview(zcol = "BIR74", legend = TRUE, col.regions = sf.colors)
+```
+
+
+With the help of this interactive map, we can see 'Mecklenburg' has the most populations in North Carolina. 
+
+```{r}
+
 # Calculate the total population for each county in the 'nc' dataset
-total_population <- aggregate(nc[["BIR74"]], by = list(nc[["NAME"]]), FUN = sum)
-colnames(total_population) <- c("County", "Total_Population")
-head(print(total_population), 15)
+total_pop <- aggregate(nc[["BIR74"]], by = list(nc[["NAME"]]), FUN = sum)
+colnames(total_pop) <- c("County", "Total_Population")
+head(total_pop)
 ```
 
 
 ```{r}
 # Find the county with the highest population in the 'nc' dataset
-county_highest_population <- total_population[which.max(total_population$Total_Population), ]
-print(county_highest_population)
+county_highest_pop <- total_pop[which.max(total_pop$Total_Population), ]
+print(county_highest_pop)
 
 ```
+
 
 ```{r}
 # Compute the area of each county in square kilometers
@@ -237,66 +265,53 @@ head(print(area_df), 15)
 
 
 ```{r}
-# Find the biggest area 
 county_biggest <- area_df[which.max(area_df$Area_Sq_Km), ]
 print(county_biggest)
+
 ```
+Let's use ’st_centroid‘ to find out about the centroids in each region in North Carolina. Centroids tend to be the areas of easiest reach. For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. 
+
+Important: run these two codes together or the plots will not add with each other! 
+
+```{r}
+
+# Plot the geometry of the 'nc' with a grey border
+plot(st_geometry(nc), border = 'grey') 
+
+# Plot the centroids of the 'nc' with a red color and add it to the previous plot
+plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red', add = TRUE)
 
 
-# World dataset
+```
+ 
+
+
+# Shapefiles 
+
+
+```{r}
+
+world_boundaries <- st_read("DATA/world-administrative-boundaries.shp")
+heights <- read.csv("DATA/average-height-of-men-for-selected-countries.csv")
+
+
+
+```
 
  
-```{r}
-# Just showing head otherwise it keeps on running for very long
+# References 
 
-str(head(world))
-```
- 
- 
-```{r}
+This is where we got out datasets and pieces of our examples. 
 
-head(world$continent, 5)
-```
+For the first excercise on mapping universities and cities 
+https://www.paulamoraga.com/book-spatial/the-sf-package-for-spatial-vector-data.html
 
+For the second excercise on polygons using North carolina 
+https://r-spatial.org/book/01-hello.html
+https://r-spatial.github.io/sf/articles/sf5.html 
 
-```{r}
-head(methods(class = 'sf'), 30)
-```
-
-
-```{r}
-plot(world['lifeExp'])
-```
-
-
-```{r}
-
-
-# WHAT IS AFRICA DOING HERE 
-
-africa_sf <- world["continent"][world$continent == "Africa", ]
-plot(africa_sf, main = 'Africa', col= NA)
-
-plot(world['pop'])
-```
-
-
-DO WE NEED THIS AS WELL
-
-```{r}
-world <- st_transform(world, 3857)
-st_crs(world)
-
-library(viridis)
-ggplot(world) +
-  geom_sf(aes(fill = lifeExp)) +
-  scale_fill_viridis("lifeExp") +
-  coord_sf(crs = st_crs(4087)) +
-  ggtitle("World Equidistant Cylindrical (EPSG 4087)") +
-  theme_bw()
-```
-
-## References 
-
+For the third excercise of shapefiles 
+https://www.naturalearthdata.com/downloads/ 
+https://catalog.data.gov/dataset/?tags=shapefile&_tags_limit=0 
 
  

@@ -34,9 +34,9 @@ The material in this repository is made available under the [MIT license](http:/
 
 ## Statement of contributions
 
-**Giulia Maria Petrilli** prepared the practice material, with a focus on the text and the first exercise
+**Giulia Maria Petrilli** prepared the practice material.
 
-**Xiaohan Wu** prepared the practice material, with a focus on the third excercises. The second excercise was prepared collaboratively. 
+**Xiaohan Wu** prepared the practice material.
 
-**Jennifer Estigene** prepared the presentation slides. 
+**Jennifer Estigene** prepared the presentation.
 
