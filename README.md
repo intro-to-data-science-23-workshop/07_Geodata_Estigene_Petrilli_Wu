@@ -10,22 +10,22 @@ This session will introduce you to the geocoding workflow with R and sf. Geocodi
 
 ### Main learning objectives
 
-The goals of this session are to (1) equip you with conceptual knowledge about the sf package and geocoding workflow, (2) show you the HOW MANY? TBD key verbs of the package, and (3) provide you with practice material as well as some further readings.
+The goals of this session are to (1) equip you with conceptual knowledge about the sf package and geocoding workflow, (2) show you some key verbs and collaborations with other packages, and (3) provide you with practice material and further readings.
 
 
 ## Instructors
 
-- Giulia Maria Petrilli ([website](http://simonmunzert.github.io/), [twitter](https://twitter.com/simonsaysnothin))
-- Jennifer Estigene ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog))     this is not your actual website and twitter ahah, just keeping what the link looks like for reference 
-- Xiaohan Wu ([website](https://en.wikipedia.org/wiki/Kermit_the_Frog), [twitter](https://twitter.com/KermitTheFrog)) same here . Also lmk what name you'd prefer we use! if this one or Julia 
+- Giulia Maria Petrilli ([GitHub](https://github.com/GiuliaGGG)
+- Jennifer Estigene ([GitHub](https://github.com/jenniferestigene)
+- Xiaohan Wu ([GitHub](https://github.com/juliawuxh)
 
 
 
 ## Further resources
 
-- [dplyr overview at dplyr.tidyverse.org](https://dplyr.tidyverse.org/)
-- [Hands-on dplyr tutorial by Data School on YouTube](https://www.youtube.com/watch?v=jWjqLW-u3hc)
-- [R for Data Science book - part on data wrangling](https://r4ds.had.co.nz/wrangle-intro.html)
+- [R for Spatial Data Science](https://r-spatial.org/book/part-2.html)
+- [GeoData and Spatial Data Analysis with R | Data Science Summer School](https://www.youtube.com/watch?v=GjTmvivY1yw)
+- [Geospatial Data Wrangling with R](https://rstudio-pubs-static.s3.amazonaws.com/606083_10ca7b98c1634ad89e860466de3db5a7.html)
 
 
 ## License
@@ -34,9 +34,9 @@ The material in this repository is made available under the [MIT license](http:/
 
 ## Statement of contributions
 
-**Giulia Maria Petrilli** prepared the practice material and post-processed the recording.
+**Giulia Maria Petrilli** prepared the practice material, with a focus on the text and the first exercise
 
-**Jennifer Estigene** prepared the presentation slides and recording. He also provided an example to the practice material.
+**Xiaohan Wu** prepared the practice material, with a focus on the third excercises. The second excercise was prepared collaboratively. 
 
-**Xiaohan Wu** brought good vibes and did something else. All tentative for now 
+**Jennifer Estigene** prepared the presentation slides. 
 
