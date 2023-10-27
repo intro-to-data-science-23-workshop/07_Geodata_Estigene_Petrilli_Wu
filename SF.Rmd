@@ -32,7 +32,6 @@ library(mapview)
 # Put commented out packages that one might want to download 
 
 ```
-jjjj
 
 # Introduction 
 
@@ -89,7 +88,7 @@ mapview(geometry_geocoded_cities, zcol = "CityName")
 
 ```
 
-Now, let us add Hertie School and the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. Let us overlay the two sets of points together on one single map. This will allow us to see all the places in the same map and not on two different ones. Please feel free to take a minute and interact with the map bleow; on the top left of the map, below the + and - symbols, there is a square icon. Press that and check the different displays of the same map, and how you can deselect and select again the two sets of points.  
+Now, let us add the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. Let us overlay the two sets of points together on one single map. This will allow us to see all the places in the same map and not on two different ones. Please feel free to take a minute and interact with the map bleow; on the top left of the map, below the + and - symbols, there is a square icon. Press that and check the different displays of the same map, and how you can deselect and select again the two sets of points.  
 
 ```{r}
 
@@ -104,28 +103,19 @@ overlay_map <- mapview(geometry_bachelors, zcol = "UniName") + mapview(geometry_
 
 overlay_map
 
-
 ```
 
 
 ## st_distance()
 
-Find places that are closest to each other using st_distance 
+Let's now explore another function of sf, st_distance(). The function can either be used to compute the distance between pairs of geometries, or even compute the area or the length of a set of geometries. In our example, we are using it to check which pair of places are the closest to each other and which ones are the farthest. In many cases, this information would not be as easy to see as in our case. For us now its quite easy to understand what canada is very far from China, but when dealing with large dataset, it'd be just extremely time consuming to google the distance between each place and check the nearest pair. 
 
 ```{r}
 
 
 colnames(geometry_geocoded_cities) <- colnames(geometry_bachelors)  # setting the col names as the same otherwise it would not rbind 
 rbind(geometry_geocoded_cities, geometry_bachelors) 
-
-
-# Ensure data_sf is in a suitable CRS that uses meters as its units.
-# Here, I'm transforming to UTM zone 33N as an example. You might want to choose a more suitable CRS based on your data's location.
 data_sf <- rbind(geometry_geocoded_cities, geometry_bachelors)
-
-# If required, transform the CRS to one with meters as units. This is important for distance calculations. 
-# (Uncomment next line if needed)
-# data_sf_proj <- st_transform(data_sf, crs = 32633)
 
 # Compute the distance matrix
 dist_matrix <- st_distance(data_sf)
@@ -143,21 +133,12 @@ city2 <- data_sf$query[closest_pair_indices[1, 2]]
 # Print the names and distance
 cat("The closest places are:", city1, "and", city2, "with a distance of", min_distance_km, "km")
 
-
 ```
-Distances in number. same code as above but trying to show distances 
 
-In this case this information is available online but with other datasets this might not always be the cas. PLus, we might be in a situation where theres way more data points than we have. 
+Ottawa and Ottawa University is the closest pair, expectedly so. 
+Let's do the same with the furthest distances now. 
 
 ```{r}
-
-# Ensure data_sf is in a suitable CRS that uses meters as its units.
-# Here, I'm transforming to UTM zone 33N as an example. You might want to choose a more suitable CRS based on your data's location.
-#data_sf_proj <- st_transform(data_sf, crs = 32633)
-
-
-# Compute the distance matrix
-#dist_matrix <- st_distance(data_sf_proj)
 
 # To find the pair with the maximum distance
 max_distance_meters <- max(dist_matrix)
@@ -174,7 +155,7 @@ cat("The farthest places are:", city1, "and", city2, "with a distance of", max_d
 
 
 ```
-
+We just learned how to transform information about a location into coordinates and points on a map, and to check the distance between points. Let us no do a different kind of exercise, and see how sf can help is drawing a region's boundaries and extract information about it. 
 
 # North Carolina 
 
