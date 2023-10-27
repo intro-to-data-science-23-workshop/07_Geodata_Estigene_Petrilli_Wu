@@ -39,13 +39,15 @@ library(mapview)
 Geocoding is the process of determining geographic coordinates for place names, street addresses, and zip codes. From information like addresses, city or building names, for example, R fetches the corresponding coordinates and pins it on a map. In this workshop, we will use adopt the standardized way to handle and process spatial data, the "simple features" (sf) package. At the end of our tutorial, you should be familiar with some common verbs used in sf and how to use them for geospatial analysis. 
 
 
-# Transforming point data to a sf object
+# Transforming point data to a sf object and plotting on a map 
 
-Let us get to know two important sf functions, st_as_sf and st_crs. They often work together. While st_as_sf function is used to convert data frames or matrices into sf objects, st_crs function is used to manage and retrieve the Coordinate Reference System (CRS) of a spatial object. To be clear, an sf object is a special data structure used for working with spatial data, while the CRS defines how the two-dimensional (or three-dimensional) points relate to actual places on the Earth.
+## st_as_sf() st_cr and mapview()
+
+Let us get to know two important sf functions, st_as_sf() and st_crs(). They often work together. While st_as_sf() is used to convert data frames or matrices into sf objects, st_crs() is used to manage and retrieve the Coordinate Reference System (CRS) of a spatial object. To be clear, an sf object is a special data structure used for working with spatial data, while the CRS defines how the two-dimensional (or three-dimensional) points relate to actual places on the Earth.
 
 Let's see them in action in an example. 
 
-Hertie's international environment makes it so we often work with people that come very far from where we are from. Specifically, the three of us that worked on this workshop are from Rome, Tianjin and Ottawa. To get a sense of how far these places actually are from each other, let's plot them on a map. The function mapview() will come in very handy, as it will produces an interactive view of our cities. 
+Hertie's international environment makes it so we often work with people from all over the world. Specifically, the three of us that worked on this workshop are from Rome, Tianjin and Ottawa. To get a sense of how far these places actually are from each other, let's plot them on a map. The function mapview() will come in very handy, as it will produces an interactive view of our cities. 
 
 ```{r}
 
@@ -63,12 +65,14 @@ mapview(cities_dsf)
 
 ```
 
-Quite cool! But to insert the coordinates feels a bit lenghty, especially when there is a r function that does it for you/ I am referring to geocode_OSM() 
+## geocode_OSM()
+
+Quite cool! But to insert the coordinates feels a bit lenghty, especially when there is a r function that does it for you. I am referring to geocode_OSM()! This function geocodes a location (based on a search query) to coordinates. It uses OpenStreetMap Nominatim; Nominatim ( from the latin "by name") is a search engine for OpenStreetMap (OSM) data.
 
 
 ```{r}
 
-cities_c <- c( "Tianjin", "Rome","Ottawa")
+cities_c <- c( "Tianjin", "Rome","Ottawa") 
 geocoded_cities <- geocode_OSM(cities_c) 
 
 geocoded_cities
@@ -79,10 +83,7 @@ geometry_geocoded_cities <- st_as_sf(geocoded_cities,
                       coords = c(x = "lon", y = "lat"),
                       crs = 4326)
 
-#mapview(geometry_geocoded_cities)
-
-
-geometry_geocoded_cities$CityName <- cities_c
+geometry_geocoded_cities$CityName <- cities_c # adding the names we want the map to show, more explanatory than addresses and zipcodes 
 
 # Use mapview and specify the zcol parameter to display city names on the legend
 mapview(geometry_geocoded_cities, zcol = "CityName")
@@ -91,7 +92,7 @@ mapview(geometry_geocoded_cities, zcol = "CityName")
 ```
 
 
-Now, let us add Hertie School and the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. we show them on a map. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. 
+Now, let us add Hertie School and the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. Let us overlay the two sets of points together on one single map. This will allow us to see all the places in the same map and not on two different ones. Please 
 
 ```{r}
 
