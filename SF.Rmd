@@ -46,6 +46,65 @@ library(mapview)
 Geocoding is the process of determining geographic coordinates for place names, street addresses, and zip codes. From information like addresses, city or building names, for example, R fetches the corresponding coordinates and pins it on a map. In this workshop, we will use adopt the standardized way to handle and process spatial data, the "simple features" (sf) package. At the end of our tutorial, you should be familiar with some common verbs used in sf and how to use them for geospatial analysis. 
 
 
+# Basic shapes understanding 
+
+Before we delve into sf functions, let's make sure we know basic geometries and how to create them. Later we can use other functions on top of the geometries such as st_dimensions
+
+```{r}
+par(mfrow = c(2,4)) # sets the layout of the plotting region to a 2x4 grid
+par(mar = c(1,1,1.2,1)) # sets the margin size for the plots
+
+# 1
+p <- st_point(5:6) # needs to be consecutive numbers
+plot(p, pch = 16)
+title("point")
+box(col = 'grey')
+
+# 2
+mp <- st_multipoint(rbind(c(1,1), c(2, 2), c(2, 1), c(2, 3), c(1,4)))
+plot(mp, pch = 16)
+title("multipoint")
+box(col = 'grey')
+
+# 3
+ls <- st_linestring(rbind(c(1,1), c(5,5), c(5, 6), c(4, 6), c(3, 4), c(2, 3)))
+plot(ls, lwd = 2)
+title("linestring")
+box(col = 'grey')
+
+# 4
+mls <- st_multilinestring(list(
+  rbind(c(1,1), c(5,5), c(5, 6), c(4, 6), c(3, 4), c(2, 3)),
+  rbind(c(3,0), c(4,1), c(2,1))))
+plot(mls, lwd = 2)
+title("multilinestring")
+box(col = 'grey')
+
+# 5 polygon
+po <- st_polygon(list(rbind(c(2,1), c(3,1), c(5,2), c(6,3), c(5,3), c(4,4), c(3,4), c(1,3), c(2,1)),
+    rbind(c(2,2), c(3,3), c(4,3), c(4,2), c(2,2))))
+plot(po, border = 'black', col = 'lavender', lwd = 2)
+title("polygon")
+box(col = 'grey')
+
+# 6 multipolygon
+mpo <- st_multipolygon(list(
+    list(rbind(c(2,1), c(3,1), c(5,2), c(6,3), c(5,3), c(4,4), c(3,4), c(1,3), c(2,1)),
+        rbind(c(2,2), c(3,3), c(4,3), c(4,2), c(2,2))),
+    list(rbind(c(3,7), c(4,7), c(5,8), c(3,9), c(2,8), c(3,7)))))
+plot(mpo, border = 'brown', col = 'orange', lwd = 2)
+title("multipolygon")
+box(col = 'grey')
+
+# 7 geometrycollection
+gc <- st_geometrycollection(list(po, ls + c(0,5), st_point(c(2,5)), st_point(c(5,4))))
+plot(gc, border = 'aquamarine', col = 'beige', pch = 16, lwd = 2)
+title("geometrycollection")
+box(col = 'grey')
+```
+
+
+
 # Read shapefiles  from the web using st_read()
 
 If we want to create a map, we need to use the 'Shapefile' format, which stores geometry and attribute information for spatial features in a dataset. The geometry is stored as a shape comprising a set of vector coordinates. We will need to read the Shapefile with st_read.
@@ -224,6 +283,13 @@ Now let's look at another concept - intersections. 'st_intersects' returns a log
 # Determine the spatial relationship between different counties
 intersections <- st_intersects(nc, nc)
 print(intersections)
+
+nc_geom = st_geometry(nc)
+nc_ints = st_intersection(nc_geom)
+# although coordinates are longitude/latitude, st_intersection
+# assumes that they are planar
+plot(nc_ints, main = "All intersections")
+
 ```
 
 ## Color key mapping
@@ -300,13 +366,16 @@ plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red', add = TRUE)
 
 This is where we got out datasets and pieces of our examples. 
 
-For the first example on shapefiles
+For the first example on shapes 
+https://r-spatial.org/book/03-Geometries.html
+
+For the second example on shapefiles
 https://www.naturalearthdata.com/downloads/ 
 
-For the second excercise on mapping universities and cities 
+For the third excercise on mapping universities and cities 
 https://www.paulamoraga.com/book-spatial/the-sf-package-for-spatial-vector-data.html
 
-For the third excercise on polygons using North Carolina 
+For the fourth excercise on polygons using North Carolina 
 https://r-spatial.org/book/01-hello.html
 https://r-spatial.github.io/sf/articles/sf5.html 
 
