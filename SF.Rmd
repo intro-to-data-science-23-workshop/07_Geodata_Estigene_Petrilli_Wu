@@ -77,9 +77,7 @@ geocoded_cities <- geocode_OSM(cities_c)
 
 geocoded_cities
 
-# Create new column using st_as_sf to store the geometry in a column 
-
-geometry_geocoded_cities <- st_as_sf(geocoded_cities,
+geometry_geocoded_cities <- st_as_sf(geocoded_cities,   # Create new column using st_as_sf to store the geometry in a column 
                       coords = c(x = "lon", y = "lat"),
                       crs = 4326)
 
@@ -92,22 +90,18 @@ mapview(geometry_geocoded_cities, zcol = "CityName")
 ```
 
 
-Now, let us add Hertie School and the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. Let us overlay the two sets of points together on one single map. This will allow us to see all the places in the same map and not on two different ones. Please 
+Now, let us add Hertie School and the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. Let us overlay the two sets of points together on one single map. This will allow us to see all the places in the same map and not on two different ones. Please feel free to take a minute and interact with the map bleow; on the top left of the map, below the + and - symbols, there is a square icon. Press that and check the different displays of the same map, and how you can deselect and select again the two sets of points.  
 
 ```{r}
 
-
 bachelors <- geocode_OSM(c("University of Ottawa", "6211 KW", "Market Street, Floor 9, San Francisco"))
+geometry_bachelors <- st_as_sf(bachelors, coords = c(x = "lon", y = "lat"), crs = 4326) # Create new column using st_as_sf to store the geometry in a column 
 
-geometry_bachelors <- st_as_sf(bachelors, coords = c(x = "lon", y = "lat"), crs = 4326)
-
-university_names <- c("University of Ottawa", "Maastricht University", "Minerva University (SF, US)")
+university_names <- c("University of Ottawa", "Maastricht University", "Minerva University (SF, US)") # names that will show up on the map
 geometry_bachelors$UniName <- university_names 
+mapview(geometry_bachelors, zcol = "UniName") # Use mapview and specify the zcol parameter to display university names on the legend
 
-# Use mapview and specify the zcol parameter to display city names on the legend
-mapview(geometry_bachelors, zcol = "UniName")
-
-overlay_map <- mapview(geometry_bachelors, zcol = "UniName") + mapview(geometry_geocoded_cities, zcol = "CityName")
+overlay_map <- mapview(geometry_bachelors, zcol = "UniName") + mapview(geometry_geocoded_cities, zcol = "CityName") # Maps overlay
 
 overlay_map
 
