@@ -74,21 +74,20 @@ Quite cool! But to insert the coordinates feels a bit lenghty, especially when t
 
 cities_c <- c( "Tianjin", "Rome","Ottawa") 
 geocoded_cities <- geocode_OSM(cities_c) 
-
-geocoded_cities
+ 
+geocoded_cities # Showing Dataframe with coordinates
 
 geometry_geocoded_cities <- st_as_sf(geocoded_cities,   # Create new column using st_as_sf to store the geometry in a column 
                       coords = c(x = "lon", y = "lat"),
                       crs = 4326)
 
-geometry_geocoded_cities$CityName <- cities_c # adding the names we want the map to show, more explanatory than addresses and zipcodes 
+geometry_geocoded_cities$CityName <- cities_c # Adding the names we want the map to show, more explanatory than addresses and zipcodes 
 
 # Use mapview and specify the zcol parameter to display city names on the legend
 mapview(geometry_geocoded_cities, zcol = "CityName")
 
 
 ```
-
 
 Now, let us add Hertie School and the universities we all went to for our Bachelors, University of Ottawa, Maastricht University and Minerva University (SF, US). To show geocode_OSM's range, we will feed into it as a building name, a zip code and an address respectively. Note how we don't need to go and fetch any API online but geocode_OSM does all the work for us. Let us overlay the two sets of points together on one single map. This will allow us to see all the places in the same map and not on two different ones. Please feel free to take a minute and interact with the map bleow; on the top left of the map, below the + and - symbols, there is a square icon. Press that and check the different displays of the same map, and how you can deselect and select again the two sets of points.  
 
@@ -106,21 +105,18 @@ overlay_map <- mapview(geometry_bachelors, zcol = "UniName") + mapview(geometry_
 overlay_map
 
 
-
-# THE LABELS ARE DIFFERENT COLOURS? CONFUSING 
-
-
 ```
 
 
+## st_distance()
 
 Find places that are closest to each other using st_distance 
 
 ```{r}
 
 
-colnames(geometry_geocoded_cities) <- colnames(geometry_bachelors)  # this otherwise it would not rbind 
-rbind(geometry_geocoded_cities, geometry_bachelors)
+colnames(geometry_geocoded_cities) <- colnames(geometry_bachelors)  # setting the col names as the same otherwise it would not rbind 
+rbind(geometry_geocoded_cities, geometry_bachelors) 
 
 
 # Ensure data_sf is in a suitable CRS that uses meters as its units.
@@ -157,11 +153,11 @@ In this case this information is available online but with other datasets this m
 
 # Ensure data_sf is in a suitable CRS that uses meters as its units.
 # Here, I'm transforming to UTM zone 33N as an example. You might want to choose a more suitable CRS based on your data's location.
-data_sf_proj <- st_transform(data_sf, crs = 32633)
+#data_sf_proj <- st_transform(data_sf, crs = 32633)
 
 
 # Compute the distance matrix
-dist_matrix <- st_distance(data_sf_proj)
+#dist_matrix <- st_distance(data_sf_proj)
 
 # To find the pair with the maximum distance
 max_distance_meters <- max(dist_matrix)
