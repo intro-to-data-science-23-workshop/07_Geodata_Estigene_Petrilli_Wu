@@ -46,6 +46,17 @@ library(mapview)
 Geocoding is the process of determining geographic coordinates for place names, street addresses, and zip codes. From information like addresses, city or building names, for example, R fetches the corresponding coordinates and pins it on a map. In this workshop, we will use adopt the standardized way to handle and process spatial data, the "simple features" (sf) package. At the end of our tutorial, you should be familiar with some common verbs used in sf and how to use them for geospatial analysis. 
 
 
+# Read shapefiles  from the web using st_read()
+
+If we want to create a map, we need to use the 'Shapefile' format, which stores geometry and attribute information for spatial features in a dataset. The geometry is stored as a shape comprising a set of vector coordinates. We will need to read the Shapefile with st_read.
+
+As an example, we read the World Administrative Boundaries dataset (https://www.naturalearthdata.com/downloads/). st_read follows the conventions of base R, similar to how it reads tabular data into data.frames, it reads file or database vector dataset as a sf object
+
+```{r}
+world_boundaries <- st_read("DATA/world-administrative-boundaries.shp")
+plot(world_boundaries["iso3"])
+```
+
 # Transforming point data to a sf object and plotting on a map 
 
 ## st_as_sf() st_cr and mapview()
@@ -191,10 +202,9 @@ The output shows:
 * the coordinate reference system (CRS) is geodetic, with coordinates in degrees longitude and latitude associated to the NAD27 datum
 * the attribute variables are followed by a variable 'geom' of type MULTIPOLYGON with unit degrees that contains the polygon information
 
-## Overlap and Intersection
+## Overlap and Intersection with st_overlaps()
 
-Now
-Overlap checks if geometry A and B "spatially overlap". They overlap if A and B have the same dimension (o for points, 1 for lines, 2 for areas) and their interiors intersect in that dimension.
+St_overlaps() checks if geometry A and B "spatially overlap". They overlap if A and B have the same dimension (o for points, 1 for lines, 2 for areas) and their interiors intersect in that dimension.
 
 ```{r}
 # check if there is overlap between the county (should be no overlap)
@@ -267,7 +277,6 @@ head(print(area_df), 15)
 ```{r}
 county_biggest <- area_df[which.max(area_df$Area_Sq_Km), ]
 print(county_biggest)
-
 ```
 Let's use ’st_centroid‘ to find out about the centroids in each region in North Carolina. Centroids tend to be the areas of easiest reach. For urban planning, infrastructure development, and resource allocation, knowing the centroids of regions can help authorities decide where to build facilities such as roads, schools, hospitals. 
 
@@ -286,32 +295,20 @@ plot(st_geometry(st_centroid(nc)), pch = 3, col = 'red', add = TRUE)
  
 
 
-# Shapefiles 
-
-
-```{r}
-
-world_boundaries <- st_read("DATA/world-administrative-boundaries.shp")
-heights <- read.csv("DATA/average-height-of-men-for-selected-countries.csv")
-
-
-
-```
-
  
 # References 
 
 This is where we got out datasets and pieces of our examples. 
 
-For the first excercise on mapping universities and cities 
+For the first example on shapefiles
+https://www.naturalearthdata.com/downloads/ 
+
+For the second excercise on mapping universities and cities 
 https://www.paulamoraga.com/book-spatial/the-sf-package-for-spatial-vector-data.html
 
-For the second excercise on polygons using North carolina 
+For the third excercise on polygons using North Carolina 
 https://r-spatial.org/book/01-hello.html
 https://r-spatial.github.io/sf/articles/sf5.html 
 
-For the third excercise of shapefiles 
-https://www.naturalearthdata.com/downloads/ 
-https://catalog.data.gov/dataset/?tags=shapefile&_tags_limit=0 
 
  
